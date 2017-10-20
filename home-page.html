@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<link href="main.css" type="text/css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<body ng-app="myApp" ng-controller="todoCtrl">
+
+<h2>Homework Check-List</h2>
+
+<form ng-submit="todoAdd()">
+
+<p>Assignment:<br>
+<input type="text" name="homework" ng-model="homework" required>
+<span style="color:red" ng-show="myForm.homework.$dirty && myForm.homework.$invalid">
+<span ng-show="myForm.homework.$error.required">Assignment name is required.</span>
+</span>
+</p>
+
+<p>Due Date:<br>
+<input type="date" name="dateInput" ng-model="dateInput" required>
+<span style="color:red" ng-show="myForm.dateInput.$dirty && myForm.dateInput.$invalid">
+<span ng-show="myForm.dateInput.$error.required">Date is required.</span>
+<span ng-show="myForm.dateInput.$error.dateInput">Invalid Date.</span>
+</span>
+</p>
+
+<p>
+<input type="submit" value="Add new"
+ng-disabled="myForm.homework.$dirty && myForm.homework.$invalid ||  
+myForm.dateInput.$dirty && myForm.dateInput.$invalid">
+</p>
+
+</form>
+
+<br>
+
+<div ng-repeat="x in todoList | orderBy: 'dateText'">
+    <input type="checkbox" ng-model="x.done"> <span ng-bind="x.todoText"></span>
+    <span ng-bind="x.dateText | date: 'MM/dd/yyyy'"></span>
+</div>
+
+<p><button ng-click="remove()">Remove marked</button></p>
+
+<script>
+var app = angular.module('myApp', []); 
+app.controller('todoCtrl', function($scope) {
+    $scope.todoList = [];
+
+    $scope.todoAdd = function() {
+        $scope.todoList.push({todoText:$scope.homework, dateText:$scope.dateInput, done:false});
+        $scope.homework = "";
+        $scope.dateInput = "";
+    };
+
+    $scope.remove = function() {
+        var oldList = $scope.todoList;
+        $scope.todoList = [];
+        angular.forEach(oldList, function(x) {
+            if (!x.done) $scope.todoList.push(x);
+        });
+    };
+});
+</script>
+
+</body>
+</html>
+
